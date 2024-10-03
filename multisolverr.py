@@ -87,7 +87,7 @@ def v1():
     if not postData:
         postData = ''
 
-    if not cookies:
+    if not cookies or len(cookies) == 0:
         cookies = globalCookieJar
 
     if not maxTimeout:
@@ -122,7 +122,9 @@ def v1():
             lastUserAgent = (response.get('solution', {}) or {}
                              ).get('userAgent', lastUserAgent) or lastUserAgent
             if response['status'] == 'ok':
-                globalCookieJar = response['solution'].get('cookies', [])
+                for cookie in response['solution'].get('cookies', []):
+                    if cookie['name'] not in map(lambda x: x['name'], globalCookieJar):
+                        globalCookieJar.append(cookie)
                 app.logger.info(
                     f" -> client {client.__class__.__name__} succeeded.")
                 return Response(
