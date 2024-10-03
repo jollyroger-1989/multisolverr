@@ -1,6 +1,23 @@
 # MultiSolverr
 
-## Docker compose basic configuration
+## Compatibility
+
+The api is partially compatible with the [Flaresolverr API](https://FlareSolverr/FlareSolverr).
+That's enough to use it with [Prowlarr](https://prowlarr.com/).
+**Not tested with Jackett.**
+
+## Functionality
+
+MultiSolverr is a simple API that can be used to solve Cloudflare challenges. It supports multiple solvers, including DirectHTTP, FlareSolverr, and Scrappey.
+It wil try to solve the challenge with the solvers in the following order:
+
+1. DirectHTTP
+2. FlareSolverr
+3. Scrappey
+
+It will return the response from the first solver that successfully solves the challenge.
+
+## Installation
 
 Add the following to your `docker-compose.yml` file:
 
