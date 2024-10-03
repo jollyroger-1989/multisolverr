@@ -23,17 +23,17 @@ Add the following to your `docker-compose.yml` file:
 
 ```yaml
 multisolverr:
-    image: ghcr.io/jollyroger-1989/multisolverr:latest
-    environment:
-      - ENABLE_DIRECTHTTP=True
-      - ENABLE_FLARESOLVERR=True
-      - FLARESOLVERR_URL=http://flaresolverr:8191/v1
-      - ENABLE_SCRAPPEY=True
-      - SCRAPPEY_API_KEY=YOUR_API_KEY
-      - HTTP_PROXY=http://user@password:proxy:3128
+  image: ghcr.io/jollyroger-1989/multisolverr:latest
+  environment:
+    - ENABLE_DIRECTHTTP=True
+    - ENABLE_FLARESOLVERR=True
+    - FLARESOLVERR_URL=http://flaresolverr:8191/v1
+    - ENABLE_SCRAPPEY=True
+    - SCRAPPEY_API_KEY=YOUR_API_KEY
+    - HTTP_PROXY=http://user@password:proxy:3128
 ```
 
-**The HTTP_PROXY config is mandotary. The use of [squid](https://hub.docker.com/r/ubuntu/squid)**
+**The HTTP_PROXY config is mandotary. The use of [squid](https://hub.docker.com/r/ubuntu/squid) is recommended.**
 
 ## Solvers
 
