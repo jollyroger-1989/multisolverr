@@ -23,13 +23,15 @@ class ScrappeyClient(Client):
             resp.get('message', ''),
             Solution(
                 resp.get('solution', {}).get('currentUrl', None),
-                resp.get('solution', {}).get('statusCode', None),
+                resp.get('solution', {}).get('statusCode', None) or 200,
                 resp.get('solution', {}).get('response', None),
                 resp.get('solution', {}).get('cookies', None),
                 resp.get('solution', {}).get(
                     'requestHeaders', {}).get('user-agent', None) or
                 resp.get('solution', {}).get(
-                    'requestHeaders', {}).get('User-Agent', None)
+                    'requestHeaders', {}).get('User-Agent', None) or
+                resp.get('solution', {}).get('userAgent', None) or
+                userAgent
             )
         )
 

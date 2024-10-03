@@ -33,6 +33,7 @@ DEBUG = os.environ.get('DEBUG', False) != False
 
 # globals
 clients = []
+globalCookieJar = []
 lastUserAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
 
 # setup clients
@@ -70,6 +71,7 @@ if len(clients) == 0:
 @app.route("/v1", methods=["POST"])
 def v1():
     global lastUserAgent  # pylint: disable=global-statement
+    global globalCookieJar  # pylint: disable=global-statement
     url = request.json.get('url')
     cmd = request.json.get('cmd')
     postData = request.json.get('postData')
@@ -86,7 +88,7 @@ def v1():
         postData = ''
 
     if not cookies:
-        cookies = []
+        cookies = globalCookieJar
 
     if not maxTimeout:
         maxTimeout = 60000
@@ -118,8 +120,9 @@ def v1():
 
             lastResponse = response
             lastUserAgent = (response.get('solution', {}) or {}
-                             ).get('userAgent', lastUserAgent)
+                             ).get('userAgent', lastUserAgent) or lastUserAgent
             if response['status'] == 'ok':
+                globalCookieJar = response['solution'].get('cookies', [])
                 app.logger.info(
                     f" -> client {client.__class__.__name__} succeeded.")
                 return Response(
