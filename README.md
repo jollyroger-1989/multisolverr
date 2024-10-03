@@ -2,7 +2,7 @@
 
 ## Compatibility
 
-The api is partially compatible with the [Flaresolverr API](https://FlareSolverr/FlareSolverr).
+The api is partially compatible with the [Flaresolverr](https://FlareSolverr/FlareSolverr) API.
 That's enough to use it with [Prowlarr](https://prowlarr.com/).
 **Not tested with Jackett.**
 
@@ -43,11 +43,11 @@ DirectHTTP is a simple solver that uses the requests library to fetch the page a
 
 ### FlareSolverr
 
-FlareSolverr is a solver that uses the FlareSolverr API to solve Cloudflare challenges.
+FlareSolverr is a solver that uses the [Flaresolverr](https://FlareSolverr/FlareSolverr) API to solve Cloudflare challenges.
 
 ### Scrappey
 
-Scrappey is a solver that uses the Scrappey API to solve Cloudflare challenges.
+Scrappey is a solver that uses the [Scrappey](https://scrappey.com/) API to solve Cloudflare challenges.
 
 
 ## Configure solvers
@@ -59,3 +59,7 @@ Scrappey is a solver that uses the Scrappey API to solve Cloudflare challenges.
 | FlareSolverr | FLARESOLVERR_URL | FlareSolverr API URL. **REQUIRED** if Flasolverr is enabled. | |
 | Scrappey | ENABLE_SCRAPPEY | Enable Scrappey solver | True/False |
 | Scrappey | SCRAPPEY_API_KEY | Scrappey API key. **REQUIRED** if Scrappey is enabled. |  |
+
+## Configure Prowlarr
+
+Configure this service as a FlareSolverr service in Prowlarr.
