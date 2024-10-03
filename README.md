@@ -2,8 +2,8 @@
 
 ## Compatibility
 
-The api is partially compatible with the [Flaresolverr](https://FlareSolverr/FlareSolverr) API.
-That's enough to use it with [Prowlarr](https://prowlarr.com/).
+The api is partially compatible with the [Flaresolverr](https://FlareSolverr/FlareSolverr) API.  
+That's enough to use it with [Prowlarr](https://prowlarr.com/).  
 **Not tested with Jackett.**
 
 ## Functionality
