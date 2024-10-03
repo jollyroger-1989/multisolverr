@@ -9,9 +9,8 @@ jobs:
   tag-release:
     runs-on: ubuntu-latest
     steps:
-        name: Auto Tag
-        uses: actions/checkout@v3
-        uses: Klemensas/action-autotag@stable
-        with:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          tag_prefix: "v"
+        - uses: actions/checkout@v3
+        - uses: Klemensas/action-autotag@stable
+          with:
+            GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+            tag_prefix: "v"
