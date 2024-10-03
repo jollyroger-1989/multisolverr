@@ -37,9 +37,9 @@ lastUserAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like
 
 # setup clients
 clients = []
-enable_directhttp = os.environ.get('ENABLE_DIRECTHTTP', False) != False
-enable_flaresolverr = os.environ.get('ENABLE_FLARESOLVERR', False) != False
-enable_scrappey = os.environ.get('ENABLE_SCRAPPEY', False) != False
+enable_directhttp = os.environ.get('ENABLE_DIRECTHTTP', 'False') != 'False'
+enable_flaresolverr = os.environ.get('ENABLE_FLARESOLVERR', 'False') != 'False'
+enable_scrappey = os.environ.get('ENABLE_SCRAPPEY', 'False') != 'False'
 
 if enable_directhttp:
     app.logger.info("DirectHTTP enabled")

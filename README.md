@@ -16,7 +16,7 @@ multisolverr:
       - HTTP_PROXY=http://user@password:proxy:3128
 ```
 
-*The HTTP_PROXY config is mandotary*
+**The HTTP_PROXY config is mandotary. The use of [squid](https://hub.docker.com/r/ubuntu/squid)**
 
 ## Solvers
 
@@ -35,10 +35,10 @@ Scrappey is a solver that uses the Scrappey API to solve Cloudflare challenges.
 
 ## Configure solvers
 
-| Solver | Environment variable | Description |
+| Solver | Environment variable | Description | Values |
 | --- | --- | --- |
-| DirectHTTP | ENABLE_DIRECTHTTP | Enable DirectHTTP solver |
-| FlareSolverr | ENABLE_FLARESOLVERR | Enable FlareSolverr solver |
-| FlareSolverr | FLARESOLVERR_URL | FlareSolverr API URL. *REQUIRED* if Flasolverr is enabled. |
-| Scrappey | ENABLE_SCRAPPEY | Enable Scrappey solver |
-| Scrappey | SCRAPPEY_API_KEY | Scrappey API key. *REQUIRED* if Scrappey is enabled. |
+| DirectHTTP | ENABLE_DIRECTHTTP | Enable DirectHTTP solver | True/False |
+| FlareSolverr | ENABLE_FLARESOLVERR | Enable FlareSolverr solver | True/False |
+| FlareSolverr | FLARESOLVERR_URL | FlareSolverr API URL. **REQUIRED** if Flasolverr is enabled. | |
+| Scrappey | ENABLE_SCRAPPEY | Enable Scrappey solver | True/False |
+| Scrappey | SCRAPPEY_API_KEY | Scrappey API key. **REQUIRED** if Scrappey is enabled. |  |

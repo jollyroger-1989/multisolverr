@@ -1,6 +1,6 @@
 import requests
 
-from client import Client, ClientResponse, Solution
+from .client import Client, ClientResponse, Solution
 
 
 class DirectHTTPClient(Client):
