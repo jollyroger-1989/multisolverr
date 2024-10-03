@@ -53,7 +53,7 @@ Scrappey is a solver that uses the Scrappey API to solve Cloudflare challenges.
 ## Configure solvers
 
 | Solver | Environment variable | Description | Values |
-| --- | --- | --- |
+| --- | --- | --- | --- |
 | DirectHTTP | ENABLE_DIRECTHTTP | Enable DirectHTTP solver | True/False |
 | FlareSolverr | ENABLE_FLARESOLVERR | Enable FlareSolverr solver | True/False |
 | FlareSolverr | FLARESOLVERR_URL | FlareSolverr API URL. **REQUIRED** if Flasolverr is enabled. | |
