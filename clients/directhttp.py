@@ -28,7 +28,7 @@ class DirectHTTPClient(Client):
                 req.text,
                 [
                     {'name': c.name, 'value': c.value,
-                     'domain': c.domain, 'path': c.path}
+                     'domain': c.domain, 'path': c.path, 'expires': c.expires}
                     for c in req.cookies
                 ],
                 userAgent
