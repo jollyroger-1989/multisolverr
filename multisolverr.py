@@ -131,6 +131,7 @@ def v1():
                                 globalCookieJar[i] = cookie
                 app.logger.info(
                     f" -> client {client.__class__.__name__} succeeded.")
+                app.logger.info(f" -> response: {response['solution']['response']}")
                 return Response(
                     response=json.dumps(response),
                     content_type='application/json'
