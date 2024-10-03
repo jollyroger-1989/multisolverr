@@ -2,8 +2,8 @@ name: Docker Image Build
 
 on:
   push:
-    tags:
-      - 'v*.*.*'
+    branches:
+      - main
 
 jobs:
   build-image:
