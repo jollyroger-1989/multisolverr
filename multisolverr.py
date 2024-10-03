@@ -12,11 +12,15 @@ from clients.flaresolverr import FlareSolverrClient
 from clients.scrappey import ScrappeyClient
 from clients.directhttp import DirectHTTPClient
 
-# set up logging
-logging.basicConfig(level=logging.INFO)
-
 # start Flask
 app = Flask(__name__)
+
+# debug
+DEBUG = os.environ.get('DEBUG', False) != False
+
+# set up logging
+LOG_LEVEL = logging.DEBUG if DEBUG else logging.INFO
+logging.basicConfig(level=LOG_LEVEL)
 
 # configure proxy
 http_proxy = os.environ.get('HTTP_PROXY', None)
@@ -27,9 +31,6 @@ if not http_proxy:
     sys.exit(1)
 
 os.environ['NO_PROXY'] = '*'
-
-# debug
-DEBUG = os.environ.get('DEBUG', False) != False
 
 # globals
 clients = []
@@ -131,7 +132,7 @@ def v1():
                                 globalCookieJar[i] = cookie
                 app.logger.info(
                     f" -> client {client.__class__.__name__} succeeded.")
-                app.logger.info(f" -> response: {response['solution']['response']}")
+                app.logger.debug(f" -> response: {response['solution']['response']}")
                 return Response(
                     response=json.dumps(response),
                     content_type='application/json'
