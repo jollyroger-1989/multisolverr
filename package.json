@@ -1,0 +1,6 @@
+{
+  "name": "multisolverr",
+  "version": "1.0.3",
+  "description": "Solve cloudflare challenges with many solvers",
+  "license": "MIT"
+}
