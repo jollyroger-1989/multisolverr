@@ -41,5 +41,6 @@ class Solution:
             'status': self.status,
             'response': self.response,
             'cookies': self.cookies,
-            'userAgent': self.userAgent
+            'userAgent': self.userAgent,
+            'headers': {}
         }
