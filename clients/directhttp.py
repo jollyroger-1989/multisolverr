@@ -14,7 +14,7 @@ class DirectHTTPClient(Client):
     def _parseResponse(self, req, userAgent, cookies):
         if req.status_code != 200:
             return ClientResponse(
-                'error', req
+                'error',
                 f"STATUS: {req.status_code} TEXT: {req.text}",
                 None
             )
