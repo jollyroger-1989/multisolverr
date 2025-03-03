@@ -31,7 +31,8 @@ class ScrappeyClient(Client):
                 resp.get('solution', {}).get(
                     'requestHeaders', {}).get('User-Agent', None) or
                 resp.get('solution', {}).get('userAgent', None) or
-                userAgent
+                userAgent,
+                resp.get('solution', {}).get('responseHeaders', {})
             )
         )
 

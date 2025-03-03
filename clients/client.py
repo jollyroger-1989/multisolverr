@@ -28,12 +28,13 @@ class ClientResponse:
 
 
 class Solution:
-    def __init__(self, url, status, response, cookies, userAgent):
+    def __init__(self, url, status, response, cookies, userAgent, headers={}):
         self.url = url
         self.status = status
         self.response = response
         self.cookies = cookies
         self.userAgent = userAgent
+        self.headers = headers
 
     def toDict(self):
         return {
@@ -42,5 +43,5 @@ class Solution:
             'response': self.response,
             'cookies': self.cookies,
             'userAgent': self.userAgent,
-            'headers': {}
+            'headers': self.headers
         }

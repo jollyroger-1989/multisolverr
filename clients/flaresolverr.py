@@ -26,7 +26,8 @@ class FlareSolverrClient(Client):
                 resp.get('solution', {}).get('status', None),
                 resp.get('solution', {}).get('response', None),
                 resp.get('solution', {}).get('cookies', None),
-                resp.get('solution', {}).get('userAgent', None)
+                resp.get('solution', {}).get('userAgent', None),
+                resp.get('solution', {}).get('headers', {})
             )
         )
 
