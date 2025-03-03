@@ -32,7 +32,7 @@ class DirectHTTPClient(Client):
                     for c in req.cookies
                 ],
                 userAgent,
-                req.headers
+                dict(req.headers)
             )
         )
 

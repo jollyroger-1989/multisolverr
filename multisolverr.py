@@ -126,13 +126,14 @@ def v1():
                 for cookie in response['solution'].get('cookies', []):
                     if cookie['name'] not in map(lambda x: x['name'], globalCookieJar):
                         globalCookieJar.append(cookie)
-                    else: # update cookie
+                    else:  # update cookie
                         for i in range(len(globalCookieJar)):
                             if globalCookieJar[i]['name'] == cookie['name']:
                                 globalCookieJar[i] = cookie
                 app.logger.info(
                     f" -> client {client.__class__.__name__} succeeded.")
-                app.logger.debug(f" -> response: {response['solution']['response']}")
+                app.logger.debug(
+                    f" -> response: {response['solution']['response']}")
                 return Response(
                     response=json.dumps(response),
                     content_type='application/json'
