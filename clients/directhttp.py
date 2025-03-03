@@ -11,10 +11,10 @@ class DirectHTTPClient(Client):
             'https': http_proxy
         }
 
-    def _parseResponse(self, req, userAgent):
+    def _parseResponse(self, req, userAgent, cookies):
         if req.status_code != 200:
             return ClientResponse(
-                'error',
+                'error', req
                 f"STATUS: {req.status_code} TEXT: {req.text}",
                 None
             )
@@ -26,7 +26,7 @@ class DirectHTTPClient(Client):
                 req.url,
                 req.status_code,
                 req.text,
-                [
+                cookies + [
                     {'name': c.name, 'value': c.value,
                      'domain': c.domain, 'path': c.path, 'expires': c.expires}
                     for c in req.cookies
@@ -49,7 +49,7 @@ class DirectHTTPClient(Client):
                                'User-Agent': userAgent
                            }
                            )
-        return self._parseResponse(req, userAgent)
+        return self._parseResponse(req, userAgent, cookies)
 
     def post(self, url, postData="", cookies=[], maxTimeout=60000, userAgent=None):
         req = requests.post(url,
@@ -62,4 +62,4 @@ class DirectHTTPClient(Client):
                                 'User-Agent': userAgent
                             }
                             )
-        return self._parseResponse(req, userAgent)
+        return self._parseResponse(req, userAgent, cookies)
