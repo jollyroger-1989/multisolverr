@@ -1,6 +1,20 @@
-import requests
+from curl_cffi import requests
 
 from .client import Client, ClientResponse, Solution
+
+
+def _impersonateFor(userAgent):
+    ua = userAgent or ''
+    isMobile = 'Mobile' in ua or 'Android' in ua or 'iPhone' in ua or 'iPad' in ua
+    if 'Edg/' in ua:
+        return 'edge'
+    if 'Firefox/' in ua:
+        return 'firefox'
+    if 'Chrome/' in ua:
+        return 'chrome_android' if 'Android' in ua else 'chrome'
+    if 'Safari/' in ua:
+        return 'safari_ios' if isMobile else 'safari'
+    return 'chrome'
 
 
 class DirectHTTPClient(Client):
@@ -29,7 +43,7 @@ class DirectHTTPClient(Client):
                 cookies + [
                     {'name': c.name, 'value': c.value,
                      'domain': c.domain, 'path': c.path, 'expires': c.expires}
-                    for c in req.cookies
+                    for c in req.cookies.jar
                 ],
                 userAgent,
                 dict(req.headers)
@@ -48,7 +62,8 @@ class DirectHTTPClient(Client):
                            proxies=self.proxies,
                            headers={
                                'User-Agent': userAgent
-                           }
+                           },
+                           impersonate=_impersonateFor(userAgent)
                            )
         return self._parseResponse(req, userAgent, cookies)
 
@@ -62,6 +77,7 @@ class DirectHTTPClient(Client):
                             proxies=self.proxies,
                             headers={
                                 'User-Agent': userAgent
-                            }
+                            },
+                            impersonate=_impersonateFor(userAgent)
                             )
         return self._parseResponse(req, userAgent, cookies)

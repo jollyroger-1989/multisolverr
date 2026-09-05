@@ -8,6 +8,7 @@ from urllib.parse import urlparse
 
 from flask import Flask, request, Response
 import requests
+from curl_cffi.requests.exceptions import RequestException as CurlRequestException
 
 from clients.client import ClientResponse
 from config import loadPipeline
@@ -109,7 +110,7 @@ def v1():
                     'Timeout',
                     None
                 )
-            except (requests.exceptions.RequestException, ValueError) as e:
+            except (requests.exceptions.RequestException, CurlRequestException, ValueError) as e:
                 req = ClientResponse(
                     'error',
                     str(e),
