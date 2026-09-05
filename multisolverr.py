@@ -33,10 +33,12 @@ if not http_proxy:
 os.environ['NO_PROXY'] = '*'
 
 # globals
-# cookies are kept per-domain so that credentials for one site are never sent to another
+# cookies and user-agents are kept per-domain so that credentials for one site are never sent to another
 cookieJarsByHost = {}
 cookieJarLock = threading.Lock()
-lastUserAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
+DEFAULT_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
+userAgentsByHost = {}
+userAgentLock = threading.Lock()
 
 VALID_COMMANDS = {'request.get': 'GET', 'request.post': 'POST'}
 
@@ -49,8 +51,6 @@ app.logger.info(
 
 @app.route("/v1", methods=["POST"])
 def v1():
-    global lastUserAgent  # pylint: disable=global-statement
-
     body = request.get_json(silent=True)
     if body is None:
         return Response(status=400, response='{"error": "a JSON body is required"}', content_type='application/json')
@@ -86,20 +86,23 @@ def v1():
     if not maxTimeout:
         maxTimeout = 60000
 
+    with userAgentLock:
+        userAgent = userAgentsByHost.get(host, DEFAULT_USER_AGENT)
+
     lastResponse = None
 
     app.logger.info(
-        f"{cmd} : {url} / {len(cookies)} cookies / {lastUserAgent}")
+        f"{cmd} : {url} / {len(cookies)} cookies / {userAgent}")
     for client in clients:
         if VALID_COMMANDS[cmd] in client.capabilities():
             req = None
             startTimestamp = time.time()
             try:
                 if cmd == 'request.get':
-                    req = client.get(url, cookies, maxTimeout, lastUserAgent)
+                    req = client.get(url, cookies, maxTimeout, userAgent)
                 elif cmd == 'request.post':
                     req = client.post(url, postData, cookies,
-                                      maxTimeout, lastUserAgent)
+                                      maxTimeout, userAgent)
             except requests.exceptions.Timeout:
                 req = ClientResponse(
                     'error',
@@ -118,8 +121,11 @@ def v1():
             response['endTimestamp'] = int(endTimestamp)
 
             lastResponse = response
-            lastUserAgent = (response.get('solution', {}) or {}
-                             ).get('userAgent', lastUserAgent) or lastUserAgent
+            newUserAgent = (response.get('solution', {}) or {}).get('userAgent')
+            if newUserAgent:
+                userAgent = newUserAgent
+                with userAgentLock:
+                    userAgentsByHost[host] = newUserAgent
             if response['status'] == 'ok':
                 with cookieJarLock:
                     jar = cookieJarsByHost.setdefault(host, [])
