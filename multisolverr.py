@@ -3,6 +3,8 @@ import time
 import os
 import sys
 import logging
+import threading
+from urllib.parse import urlparse
 
 from flask import Flask, request, Response
 import requests
@@ -33,9 +35,12 @@ if not http_proxy:
 os.environ['NO_PROXY'] = '*'
 
 # globals
-clients = []
-globalCookieJar = []
+# cookies are kept per-domain so that credentials for one site are never sent to another
+cookieJarsByHost = {}
+cookieJarLock = threading.Lock()
 lastUserAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
+
+VALID_COMMANDS = {'request.get': 'GET', 'request.post': 'POST'}
 
 # setup clients
 clients = []
@@ -72,12 +77,16 @@ if len(clients) == 0:
 @app.route("/v1", methods=["POST"])
 def v1():
     global lastUserAgent  # pylint: disable=global-statement
-    global globalCookieJar  # pylint: disable=global-statement
-    url = request.json.get('url')
-    cmd = request.json.get('cmd')
-    postData = request.json.get('postData')
-    cookies = request.json.get('cookies')
-    maxTimeout = request.json.get('maxTimeout')
+
+    body = request.get_json(silent=True)
+    if body is None:
+        return Response(status=400, response='{"error": "a JSON body is required"}', content_type='application/json')
+
+    url = body.get('url')
+    cmd = body.get('cmd')
+    postData = body.get('postData')
+    cookies = body.get('cookies')
+    maxTimeout = body.get('maxTimeout')
 
     if not url:
         return Response(status=400, response='{"error": "url is required"}', content_type='application/json')
@@ -85,11 +94,21 @@ def v1():
     if not cmd:
         return Response(status=400, response='{"error": "cmd is required"}', content_type='application/json')
 
+    if cmd not in VALID_COMMANDS:
+        return Response(
+            status=400,
+            response=json.dumps({"error": f"unsupported cmd: {cmd}"}),
+            content_type='application/json'
+        )
+
+    host = urlparse(url).netloc
+
     if not postData:
         postData = ''
 
     if not cookies or len(cookies) == 0:
-        cookies = globalCookieJar
+        with cookieJarLock:
+            cookies = list(cookieJarsByHost.get(host, []))
 
     if not maxTimeout:
         maxTimeout = 60000
@@ -99,7 +118,7 @@ def v1():
     app.logger.info(
         f"{cmd} : {url} / {len(cookies)} cookies / {lastUserAgent}")
     for client in clients:
-        if request.method in client.capabilities():
+        if VALID_COMMANDS[cmd] in client.capabilities():
             req = None
             startTimestamp = time.time()
             try:
@@ -114,6 +133,12 @@ def v1():
                     'Timeout',
                     None
                 )
+            except (requests.exceptions.RequestException, ValueError) as e:
+                req = ClientResponse(
+                    'error',
+                    str(e),
+                    None
+                )
             endTimestamp = time.time()
             response = req.toDict()
             response['startTimestamp'] = int(startTimestamp)
@@ -123,13 +148,15 @@ def v1():
             lastUserAgent = (response.get('solution', {}) or {}
                              ).get('userAgent', lastUserAgent) or lastUserAgent
             if response['status'] == 'ok':
-                for cookie in response['solution'].get('cookies', []):
-                    if cookie['name'] not in map(lambda x: x['name'], globalCookieJar):
-                        globalCookieJar.append(cookie)
-                    else:  # update cookie
-                        for i in range(len(globalCookieJar)):
-                            if globalCookieJar[i]['name'] == cookie['name']:
-                                globalCookieJar[i] = cookie
+                with cookieJarLock:
+                    jar = cookieJarsByHost.setdefault(host, [])
+                    for cookie in response['solution'].get('cookies', []) or []:
+                        for i in range(len(jar)):
+                            if jar[i]['name'] == cookie['name']:
+                                jar[i] = cookie
+                                break
+                        else:
+                            jar.append(cookie)
                 app.logger.info(
                     f" -> client {client.__class__.__name__} succeeded.")
                 app.logger.debug(
