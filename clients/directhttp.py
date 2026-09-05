@@ -39,7 +39,8 @@ class DirectHTTPClient(Client):
     def capabilities(self):
         return ['GET', 'POST']
 
-    def get(self, url, cookies=[], maxTimeout=60000, userAgent=None):
+    def get(self, url, cookies=None, maxTimeout=60000, userAgent=None):
+        cookies = cookies or []
         req = requests.get(url,
                            cookies=dict(
                                map(lambda k: [k['name'], k['value']], cookies)),
@@ -51,7 +52,8 @@ class DirectHTTPClient(Client):
                            )
         return self._parseResponse(req, userAgent, cookies)
 
-    def post(self, url, postData="", cookies=[], maxTimeout=60000, userAgent=None):
+    def post(self, url, postData="", cookies=None, maxTimeout=60000, userAgent=None):
+        cookies = cookies or []
         req = requests.post(url,
                             data=postData,
                             cookies=dict(

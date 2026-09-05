@@ -34,21 +34,21 @@ class FlareSolverrClient(Client):
     def capabilities(self):
         return ['GET', 'POST']
 
-    def get(self, url, cookies=[], maxTimeout=60000, userAgent=None):
+    def get(self, url, cookies=None, maxTimeout=60000, userAgent=None):
         req = requests.post(self.url, timeout=maxTimeout, json={
             'cmd': 'request.get',
             'url': url,
             'maxTimeout': maxTimeout,
-            'cookies': cookies
+            'cookies': cookies or []
         })
         return self._parseResponse(req)
 
-    def post(self, url, postData="", cookies=[], maxTimeout=60000, userAgent=None):
+    def post(self, url, postData="", cookies=None, maxTimeout=60000, userAgent=None):
         req = requests.post(self.url, timeout=maxTimeout, json={
             'cmd': 'request.post',
             'url': url,
             'maxTimeout': maxTimeout,
             'postData': postData,
-            'cookies': cookies
+            'cookies': cookies or []
         })
         return self._parseResponse(req)

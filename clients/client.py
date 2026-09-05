@@ -5,10 +5,10 @@ class Client:
     def capabilities(self):
         raise NotImplementedError
 
-    def get(self, url, cookies):
+    def get(self, url, cookies=None):
         raise NotImplementedError
 
-    def post(self, url, postData, cookies):
+    def post(self, url, postData, cookies=None):
         raise NotImplementedError
 
 
@@ -23,18 +23,18 @@ class ClientResponse:
             'status': self.status,
             'message': self.message,
             'solution': self.solution.toDict() if self.solution else None,
-            'versiom': '1.0.0'
+            'version': '1.0.0'
         }
 
 
 class Solution:
-    def __init__(self, url, status, response, cookies, userAgent, headers={}):
+    def __init__(self, url, status, response, cookies, userAgent, headers=None):
         self.url = url
         self.status = status
         self.response = response
         self.cookies = cookies
         self.userAgent = userAgent
-        self.headers = headers
+        self.headers = headers if headers is not None else {}
 
     def toDict(self):
         return {

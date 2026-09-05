@@ -39,11 +39,11 @@ class ScrappeyClient(Client):
     def capabilities(self):
         return ['GET', 'POST']
 
-    def get(self, url, cookies=[], maxTimeout=60000, userAgent=None):
+    def get(self, url, cookies=None, maxTimeout=60000, userAgent=None):
         paylod = {
             'cmd': 'request.get',
             'url': url,
-            'cookiejar': cookies,
+            'cookiejar': cookies or [],
             'proxy': self.proxy,
             'customHeaders': {
                 'user-agent': userAgent,
@@ -53,12 +53,12 @@ class ScrappeyClient(Client):
         req = requests.post(self.url, timeout=maxTimeout, json=paylod)
         return self._parseResponse(req, userAgent)
 
-    def post(self, url, postData="", cookies=[], maxTimeout=60000, userAgent=None):
+    def post(self, url, postData="", cookies=None, maxTimeout=60000, userAgent=None):
         paylod = {
             'cmd': 'request.post',
             'url': url,
             'postData': postData,
-            'cookiejar': cookies,
+            'cookiejar': cookies or [],
             'proxy': self.proxy,
             'customHeaders': {
                 'user-agent': userAgent,
