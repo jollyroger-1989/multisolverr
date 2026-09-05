@@ -9,28 +9,22 @@ That's enough to use it with [Prowlarr](https://prowlarr.com/).
 ## Functionality
 
 MultiSolverr is a simple API that can be used to solve Cloudflare challenges. It supports multiple solvers, including DirectHTTP, FlareSolverr, and Scrappey.
-It wil try to solve the challenge with the solvers in the following order:
-
-1. DirectHTTP
-2. FlareSolverr
-3. Scrappey
-
-It will return the response from the first solver that successfully solves the challenge.
+It will try to solve the challenge with the solvers in the order defined in the [pipeline config file](#configure-solvers), and return the response from the first one that succeeds.
 
 ## Installation
 
-Add the following to your `docker-compose.yml` file:
+Copy [`pipeline.example.yml`](pipeline.example.yml) to `pipeline.yml`, edit it to
+pick which solvers to use and in which order, then mount it in your
+`docker-compose.yml` file:
 
 ```yaml
 multisolverr:
   image: ghcr.io/jollyroger-1989/multisolverr:latest
   environment:
-    - ENABLE_DIRECTHTTP=True
-    - ENABLE_FLARESOLVERR=True
-    - FLARESOLVERR_URL=http://flaresolverr:8191/v1
-    - ENABLE_SCRAPPEY=True
-    - SCRAPPEY_API_KEY=YOUR_API_KEY
     - HTTP_PROXY=http://user@password:proxy:3128
+    - SCRAPPEY_API_KEY=YOUR_API_KEY
+  volumes:
+    - ./pipeline.yml:/app/pipeline.yml:ro
 ```
 
 **The HTTP_PROXY config is mandotary. The use of [squid](https://hub.docker.com/r/ubuntu/squid) is recommended.**
@@ -52,13 +46,29 @@ Scrappey is a solver that uses the [Scrappey](https://scrappey.com/) API to solv
 
 ## Configure solvers
 
-| Solver | Environment variable | Description | Values |
-| --- | --- | --- | --- |
-| DirectHTTP | ENABLE_DIRECTHTTP | Enable DirectHTTP solver | True/False |
-| FlareSolverr | ENABLE_FLARESOLVERR | Enable FlareSolverr solver | True/False |
-| FlareSolverr | FLARESOLVERR_URL | FlareSolverr API URL. **REQUIRED** if Flasolverr is enabled. | |
-| Scrappey | ENABLE_SCRAPPEY | Enable Scrappey solver | True/False |
-| Scrappey | SCRAPPEY_API_KEY | Scrappey API key. **REQUIRED** if Scrappey is enabled. |  |
+The pipeline (which solvers to use, and in which order) is defined in a YAML
+file, `pipeline.yml` by default (override the path with the `PIPELINE_CONFIG`
+environment variable). Each solver is tried in order until one succeeds:
+
+```yaml
+pipeline:
+  - type: direct
+
+  - type: flaresolverr
+    url: http://flaresolverr:8191/v1
+
+  - type: scrappey
+    api_key: ${SCRAPPEY_API_KEY}
+```
+
+Values support `${VAR}` interpolation from the environment, so secrets like
+API keys don't need to be hardcoded in the file.
+
+| Solver | `type` | Required fields |
+| --- | --- | --- |
+| DirectHTTP | `direct` | |
+| FlareSolverr | `flaresolverr` | `url`: FlareSolverr API URL |
+| Scrappey | `scrappey` | `api_key`: Scrappey API key |
 
 ## Configure Prowlarr
 

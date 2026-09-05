@@ -10,9 +10,7 @@ from flask import Flask, request, Response
 import requests
 
 from clients.client import ClientResponse
-from clients.flaresolverr import FlareSolverrClient
-from clients.scrappey import ScrappeyClient
-from clients.directhttp import DirectHTTPClient
+from config import loadPipeline
 
 # start Flask
 app = Flask(__name__)
@@ -42,36 +40,11 @@ lastUserAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like
 
 VALID_COMMANDS = {'request.get': 'GET', 'request.post': 'POST'}
 
-# setup clients
-clients = []
-enable_directhttp = os.environ.get('ENABLE_DIRECTHTTP', 'False') != 'False'
-enable_flaresolverr = os.environ.get('ENABLE_FLARESOLVERR', 'False') != 'False'
-enable_scrappey = os.environ.get('ENABLE_SCRAPPEY', 'False') != 'False'
-
-if enable_directhttp:
-    app.logger.info("DirectHTTP enabled")
-    clients.append(DirectHTTPClient(http_proxy=http_proxy))
-
-if enable_flaresolverr:
-    flaresolverr_url = os.environ.get('FLARESOLVERR_URL', None)
-    if not flaresolverr_url:
-        app.logger.error('FLARESOLVERR_URL must be set')
-        sys.exit(1)
-    app.logger.info(f'FlareSolverr enabled / URL: {flaresolverr_url}')
-    clients.append(FlareSolverrClient(
-        url=flaresolverr_url, http_proxy=http_proxy))
-
-if enable_scrappey:
-    scrappey_api_key = os.environ.get('SCRAPPEY_API_KEY', None)
-    if not scrappey_api_key:
-        app.logger.error('SCRAPPEY_API_KEY must be set')
-        sys.exit(1)
-    app.logger.info("Scrappey enabled")
-    clients.append(ScrappeyClient(scrappey_api_key, http_proxy=http_proxy))
-
-if len(clients) == 0:
-    app.logger.error('No clients enabled')
-    sys.exit(1)
+# setup clients from the pipeline config file
+pipeline_config_path = os.environ.get('PIPELINE_CONFIG', 'pipeline.yml')
+clients = loadPipeline(pipeline_config_path, http_proxy, app.logger)
+app.logger.info(
+    f"Pipeline ({pipeline_config_path}): {' -> '.join(c.__class__.__name__ for c in clients)}")
 
 
 @app.route("/v1", methods=["POST"])

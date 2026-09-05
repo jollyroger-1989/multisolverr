@@ -4,7 +4,7 @@ RUN mkdir /app
 WORKDIR /app
 COPY requirements.txt /app/
 RUN pip install -r requirements.txt
-COPY multisolverr.py app.ini wsgi.py /app/
+COPY multisolverr.py config.py app.ini wsgi.py pipeline.example.yml /app/
 COPY clients /app/clients
 
 RUN pip install uwsgi

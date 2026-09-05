@@ -1,0 +1,12 @@
+# Solveurs essayés dans l'ordre indiqué, jusqu'à ce que l'un d'eux réussisse.
+# Copiez ce fichier vers pipeline.yml (ou pointez PIPELINE_CONFIG dessus) et
+# adaptez-le. Les valeurs supportent l'interpolation ${VAR} depuis l'environnement,
+# utile pour ne pas committer de secrets (ex: api_key).
+pipeline:
+  - type: direct
+
+  - type: flaresolverr
+    url: http://flaresolverr:8191/v1
+
+  - type: scrappey
+    api_key: ${SCRAPPEY_API_KEY}
