@@ -10,6 +10,7 @@ from clients.scrappey import ScrappeyClient
 CLIENT_TYPES = {
     'direct': DirectHTTPClient,
     'flaresolverr': FlareSolverrClient,
+    'byparr': FlareSolverrClient,
     'scrappey': ScrappeyClient,
 }
 
@@ -25,10 +26,10 @@ def _buildClient(step, http_proxy, logger):
     if solver_type == 'direct':
         return client_cls(http_proxy=http_proxy)
 
-    if solver_type == 'flaresolverr':
+    if solver_type in ('flaresolverr', 'byparr'):
         url = step.get('url')
         if not url:
-            logger.error("Pipeline step 'flaresolverr' requires a 'url'")
+            logger.error(f"Pipeline step '{solver_type}' requires a 'url'")
             sys.exit(1)
         return client_cls(url=url, http_proxy=http_proxy)
 

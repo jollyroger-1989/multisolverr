@@ -8,7 +8,7 @@ That's enough to use it with [Prowlarr](https://prowlarr.com/).
 
 ## Functionality
 
-MultiSolverr is a simple API that can be used to solve Cloudflare challenges. It supports multiple solvers, including DirectHTTP, FlareSolverr, and Scrappey.
+MultiSolverr is a simple API that can be used to solve Cloudflare challenges. It supports multiple solvers, including DirectHTTP, FlareSolverr, Byparr, and Scrappey.
 It will try to solve the challenge with the solvers in the order defined in the [pipeline config file](#configure-solvers), and return the response from the first one that succeeds.
 
 ## Installation
@@ -39,6 +39,10 @@ DirectHTTP is a simple solver that uses the requests library to fetch the page a
 
 FlareSolverr is a solver that uses the [Flaresolverr](https://FlareSolverr/FlareSolverr) API to solve Cloudflare challenges.
 
+### Byparr
+
+Byparr is a solver that uses the [Byparr](https://github.com/ThePhaseless/Byparr) API (FlareSolverr-compatible) to solve Cloudflare challenges.
+
 ### Scrappey
 
 Scrappey is a solver that uses the [Scrappey](https://scrappey.com/) API to solve Cloudflare challenges.
@@ -57,6 +61,9 @@ pipeline:
   - type: flaresolverr
     url: http://flaresolverr:8191/v1
 
+  - type: byparr
+    url: http://byparr:8191/v1
+
   - type: scrappey
     api_key: ${SCRAPPEY_API_KEY}
 ```
@@ -68,6 +75,7 @@ API keys don't need to be hardcoded in the file.
 | --- | --- | --- |
 | DirectHTTP | `direct` | |
 | FlareSolverr | `flaresolverr` | `url`: FlareSolverr API URL |
+| Byparr | `byparr` | `url`: Byparr API URL |
 | Scrappey | `scrappey` | `api_key`: Scrappey API key |
 
 ## Configure Prowlarr

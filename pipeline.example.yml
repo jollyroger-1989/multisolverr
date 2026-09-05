@@ -8,5 +8,8 @@ pipeline:
   - type: flaresolverr
     url: http://flaresolverr:8191/v1
 
+  - type: byparr
+    url: http://byparr:8191/v1
+
   - type: scrappey
     api_key: ${SCRAPPEY_API_KEY}
