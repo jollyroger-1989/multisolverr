@@ -3,6 +3,7 @@ import sys
 
 import yaml
 
+from clients.byparr import ByparrClient
 from clients.directhttp import DirectHTTPClient
 from clients.flaresolverr import FlareSolverrClient
 from clients.scrappey import ScrappeyClient
@@ -10,7 +11,7 @@ from clients.scrappey import ScrappeyClient
 CLIENT_TYPES = {
     'direct': DirectHTTPClient,
     'flaresolverr': FlareSolverrClient,
-    'byparr': FlareSolverrClient,
+    'byparr': ByparrClient,
     'scrappey': ScrappeyClient,
 }
 

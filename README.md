@@ -43,6 +43,23 @@ FlareSolverr is a solver that uses the [Flaresolverr](https://FlareSolverr/Flare
 
 Byparr is a solver that uses the [Byparr](https://github.com/ThePhaseless/Byparr) API (FlareSolverr-compatible) to solve Cloudflare challenges.
 
+**Byparr only supports GET.** Its own request model has no `postData` or
+`cookies` fields, and it always performs a plain GET navigation regardless
+of the `cmd` it's sent. Posting a login/form submission to it still gets a
+200 back — for a blank, freshly reloaded GET of the page, with the
+submitted data silently discarded. `ByparrClient.capabilities()` reports
+only `['GET']` so the pipeline correctly skips it (rather than reporting a
+misleading success) for any `request.post`.
+
+This also means a GET-then-POST flow (e.g. scrape a login page for a CSRF
+token, then submit the form) should not have Byparr placed before
+FlareSolverr/Scrappey in the pipeline: if `direct` fails on both steps,
+Byparr would handle the GET while a different solver handles the POST,
+splitting the flow across two unrelated browser sessions/cookie jars and
+usually breaking session- or CSRF-bound logins even though the POST
+"succeeds". Keep FlareSolverr/Scrappey ahead of Byparr for any site whose
+login flow can't complete as a single GET.
+
 ### Scrappey
 
 Scrappey is a solver that uses the [Scrappey](https://scrappey.com/) API to solve Cloudflare challenges.
